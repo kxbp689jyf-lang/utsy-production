@@ -86,7 +86,7 @@ function Rotating3DText() {
   return (
     <div
       style={{ perspective: 1400 }}
-      className="pointer-events-none absolute inset-x-0 bottom-32 z-[5] flex items-center justify-center px-6 md:px-12"
+      className="pointer-events-none absolute inset-x-0 bottom-[44%] z-[5] flex items-end justify-center px-6 md:bottom-32 md:px-12"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -95,7 +95,7 @@ function Rotating3DText() {
           animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
           exit={{ opacity: 0, rotateX: 90, y: -80, scale: 0.85 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          style={{ transformStyle: "preserve-3d" }}
+          style={{ transformStyle: "preserve-3d", transformOrigin: "bottom center" }}
           className="relative w-full max-w-[1100px] text-center"
         >
           {/* Counter label */}
@@ -148,13 +148,6 @@ function Rotating3DText() {
             ))}
           </motion.div>
           </div>
-          {/* Animated underline */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.6, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-7 h-1 w-32 origin-left bg-lime-300 md:w-40"
-          />
         </motion.div>
       </AnimatePresence>
     </div>
@@ -325,13 +318,13 @@ function Hero({ onCTA }) {
       <Rotating3DText />
 
       <div className="relative z-10 flex h-[calc(100vh-96px)] min-h-[604px] flex-col justify-between px-6 pb-12 md:px-12">
-        <div className="mt-8 max-w-[1400px] md:mt-12">
+        <div className="mt-2 max-w-[1400px] md:mt-12">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             style={FONT_MONO}
-            className="mb-6 flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-lime-300 md:text-xs"
+            className="mb-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-lime-300 md:mb-6 md:text-xs"
           >
             <Sparkles className="h-3 w-3" />
             ПРОДАКШН КОРОТКОГО КОНТЕНТА / МОСКВА
@@ -339,7 +332,7 @@ function Hero({ onCTA }) {
 
           <h1
             style={FONT_DISPLAY}
-            className="text-[10vw] font-black leading-[0.9] tracking-[-0.04em] text-white md:text-[6.5vw] xl:text-[5.5vw]"
+            className="text-[8.5vw] font-black leading-[0.9] tracking-[-0.04em] text-white md:text-[6.5vw] xl:text-[5.5vw]"
           >
             {TITLE_LINES.map((line, i) => (
               <span key={i} className="block overflow-hidden">
@@ -358,7 +351,7 @@ function Hero({ onCTA }) {
           </h1>
         </div>
 
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+        <div className="flex flex-col items-center justify-between gap-6 text-center md:flex-row md:items-end md:text-left">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
