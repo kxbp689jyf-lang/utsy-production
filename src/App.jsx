@@ -289,15 +289,6 @@ function Hero({ onCTA }) {
 
   return (
     <section ref={ref} className="relative h-screen min-h-[700px] w-full overflow-hidden bg-black">
-      <motion.video
-        autoPlay loop muted playsInline
-        style={{ scale: videoScale }}
-        className="absolute inset-0 h-full w-full object-cover"
-        poster="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=2400&q=80"
-      >
-        <source src="https://cdn.coverr.co/videos/coverr-a-man-records-himself-with-a-phone-4862/1080p.mp4" type="video/mp4" />
-      </motion.video>
-
       <motion.div
         style={{ opacity: overlayOpacity }}
         className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/95"
