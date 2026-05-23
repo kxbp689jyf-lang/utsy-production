@@ -971,10 +971,115 @@ function PortfolioRoulette() {
 // =============================================================================
 // BRIEF + FOOTER
 // =============================================================================
+// =============================================================================
+// FIREWORKS — full-screen celebration animation when form is submitted
+// =============================================================================
+function Fireworks() {
+  // 4 firework bursts at different positions and times
+  const bursts = [
+    { x: "20%", y: "30%", delay: 0,   colors: ["#bef264", "#ffffff", "#fb923c"] },
+    { x: "75%", y: "25%", delay: 0.3, colors: ["#bef264", "#e879f9", "#ffffff"] },
+    { x: "50%", y: "55%", delay: 0.6, colors: ["#bef264", "#ffffff", "#bef264"] },
+    { x: "85%", y: "65%", delay: 0.9, colors: ["#fb923c", "#bef264", "#ffffff"] },
+    { x: "15%", y: "70%", delay: 1.2, colors: ["#e879f9", "#bef264", "#ffffff"] },
+  ];
+
+  // Confetti — small falling rectangles
+  const confettiCount = 60;
+  const confettiColors = ["#bef264", "#ffffff", "#fb923c", "#e879f9", "#0a0a0a"];
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[100] overflow-hidden">
+      {/* Fireworks bursts */}
+      {bursts.map((b, bi) =>
+        Array.from({ length: 24 }).map((_, i) => {
+          const angle = (i / 24) * Math.PI * 2;
+          const distance = 180 + Math.random() * 80;
+          const dx = Math.cos(angle) * distance;
+          const dy = Math.sin(angle) * distance;
+          const color = b.colors[i % b.colors.length];
+          return (
+            <motion.div
+              key={`burst-${bi}-${i}`}
+              initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                x: dx,
+                y: [0, dy, dy + 60],
+                scale: [0, 1, 0.6],
+              }}
+              transition={{
+                duration: 1.6,
+                delay: b.delay,
+                ease: [0.22, 1, 0.36, 1],
+                times: [0, 0.2, 0.7, 1],
+              }}
+              style={{
+                left: b.x,
+                top: b.y,
+                width: 8,
+                height: 8,
+                backgroundColor: color,
+                boxShadow: `0 0 12px ${color}, 0 0 24px ${color}`,
+              }}
+              className="absolute rounded-full"
+            />
+          );
+        })
+      )}
+
+      {/* Confetti raining down */}
+      {Array.from({ length: confettiCount }).map((_, i) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 1.5;
+        const duration = 2.5 + Math.random() * 2;
+        const size = 6 + Math.random() * 8;
+        const color = confettiColors[i % confettiColors.length];
+        const rotateEnd = (Math.random() - 0.5) * 720;
+        return (
+          <motion.div
+            key={`confetti-${i}`}
+            initial={{ y: -40, x: 0, rotate: 0, opacity: 0 }}
+            animate={{
+              y: "110vh",
+              x: (Math.random() - 0.5) * 200,
+              rotate: rotateEnd,
+              opacity: [0, 1, 1, 0.7, 0],
+            }}
+            transition={{
+              duration,
+              delay,
+              ease: "easeIn",
+              times: [0, 0.1, 0.6, 0.9, 1],
+            }}
+            style={{
+              left: `${left}%`,
+              top: 0,
+              width: size,
+              height: size * 0.4,
+              backgroundColor: color,
+            }}
+            className="absolute"
+          />
+        );
+      })}
+
+      {/* Center flash */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: [0, 0.4, 0], scale: [0, 3, 4] }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime-300 blur-3xl"
+      />
+    </div>
+  );
+}
+
 function BriefSection({ formRef }) {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [showFireworks, setShowFireworks] = useState(false);
   const [form, setForm] = useState({ name: "", contact: "", task: "" });
 
   const submit = async (e) => {
@@ -982,7 +1087,6 @@ function BriefSection({ formRef }) {
     setSending(true);
     setError("");
 
-    // Build a nicely formatted Telegram message
     const now = new Date();
     const date = now.toLocaleString("ru-RU", {
       day: "2-digit",
@@ -1015,6 +1119,8 @@ function BriefSection({ formRef }) {
       const data = await res.json();
       if (data.ok) {
         setSubmitted(true);
+        setShowFireworks(true);
+        setTimeout(() => setShowFireworks(false), 4500);
       } else {
         setError("Не удалось отправить. Попробуй ещё раз или напиши напрямую.");
       }
@@ -1027,6 +1133,7 @@ function BriefSection({ formRef }) {
 
   return (
     <section ref={formRef} id="brief" className="relative bg-lime-300 px-6 py-24 md:px-12 md:py-32">
+      <AnimatePresence>{showFireworks && <Fireworks />}</AnimatePresence>
       <div className="mx-auto max-w-[1600px]">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}>
           <motion.p variants={fadeUp} style={FONT_MONO} className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-black">
@@ -1115,7 +1222,7 @@ function BriefSection({ formRef }) {
                     Принято.
                   </div>
                   <p className="mt-4 max-w-md text-white/70">
-                    Свяжемся в течение 2 часов в рабочее время. Подготовьте референсы — они ускорят процесс.
+                    Скоро свяжемся. Подготовьте референсы — они ускорят процесс.
                   </p>
                 </motion.div>
               )}
