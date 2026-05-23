@@ -6,6 +6,34 @@ import { ArrowRight, ArrowUpRight, Play, ChevronLeft, ChevronRight, Send, Sparkl
 // УЦЫ.ПРОДАКШН
 // =============================================================================
 
+// =============================================================================
+// 🔧 КОНФИГ — здесь меняй контакты, соцсети и настройки телеграм-бота
+// =============================================================================
+const CONFIG = {
+  // ---- Telegram-бот для приёма заявок ----
+  telegram: {
+    botToken: "8843329983:AAEDag9BDAG37KT8QvIkBZU4yFeoKxtmFik",
+    chatId: "540262072",
+  },
+
+  // ---- Контакты, которые видны на сайте ----
+  contacts: {
+    telegramHandle: "@muradchavtaraev",
+    telegramUrl: "https://t.me/muradchavtaraev",
+    email: "murchfilmstudio@gmail.com",
+    phone: "+79524106834",
+    phoneDisplay: "+7 (952) 410-68-34",
+  },
+
+  // ---- Соцсети в футере ----
+  socials: {
+    telegram: "https://t.me/utsyprod",
+    instagram: "https://www.instagram.com/utsy_prod/",
+  },
+};
+
+// =============================================================================
+
 const FONT_DISPLAY = { fontFamily: "'Archivo Black', 'Arial Black', sans-serif" };
 const FONT_SANS = { fontFamily: "'Space Grotesk', system-ui, sans-serif" };
 const FONT_MONO = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" };
@@ -945,11 +973,56 @@ function PortfolioRoulette() {
 // =============================================================================
 function BriefSection({ formRef }) {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", contact: "", task: "" });
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setError("");
+
+    // Build a nicely formatted Telegram message
+    const now = new Date();
+    const date = now.toLocaleString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const text =
+      `🔔 *НОВАЯ ЗАЯВКА — УЦЫ.ПРОДАКШН*\n\n` +
+      `👤 *Имя:* ${form.name}\n` +
+      `📱 *Контакт:* ${form.contact}\n` +
+      `📝 *Задача:*\n${form.task}\n\n` +
+      `⏰ ${date}`;
+
+    try {
+      const res = await fetch(
+        `https://api.telegram.org/bot${CONFIG.telegram.botToken}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CONFIG.telegram.chatId,
+            text,
+            parse_mode: "Markdown",
+          }),
+        }
+      );
+      const data = await res.json();
+      if (data.ok) {
+        setSubmitted(true);
+      } else {
+        setError("Не удалось отправить. Попробуй ещё раз или напиши напрямую.");
+      }
+    } catch {
+      setError("Проблема с соединением. Проверь интернет и попробуй ещё раз.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -1017,12 +1090,19 @@ function BriefSection({ formRef }) {
 
                   <button
                     type="submit"
+                    disabled={sending}
                     style={FONT_MONO}
-                    className="group flex items-center gap-4 rounded-full bg-black px-8 py-5 text-sm font-bold uppercase tracking-widest text-lime-300 transition-transform hover:scale-105"
+                    className="group flex items-center gap-4 rounded-full bg-black px-8 py-5 text-sm font-bold uppercase tracking-widest text-lime-300 transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   >
-                    Отправить бриф
-                    <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    {sending ? "Отправляем..." : "Отправить бриф"}
+                    <Send className={`h-4 w-4 transition-transform ${sending ? "" : "group-hover:translate-x-1"}`} />
                   </button>
+
+                  {error && (
+                    <p style={FONT_MONO} className="text-xs uppercase tracking-widest text-red-700">
+                      ⚠ {error}
+                    </p>
+                  )}
                 </motion.form>
               ) : (
                 <motion.div
@@ -1048,11 +1128,14 @@ function BriefSection({ formRef }) {
                 <div style={FONT_MONO} className="mb-3 text-xs uppercase tracking-widest text-black/60">
                   Прямой контакт
                 </div>
-                <a href="https://t.me/utsy" style={FONT_DISPLAY} className="block text-3xl font-black tracking-tighter text-black transition hover:text-white md:text-4xl">
-                  @utsy
+                <a href={CONFIG.contacts.telegramUrl} target="_blank" rel="noreferrer" style={FONT_DISPLAY} className="block text-3xl font-black tracking-tighter text-black transition hover:text-white md:text-4xl">
+                  {CONFIG.contacts.telegramHandle}
                 </a>
-                <a href="mailto:hi@utsy.pro" style={FONT_DISPLAY} className="mt-2 block text-2xl font-black tracking-tighter text-black transition hover:text-white md:text-3xl">
-                  hi@utsy.pro
+                <a href={`mailto:${CONFIG.contacts.email}`} style={FONT_DISPLAY} className="mt-2 block text-2xl font-black tracking-tighter text-black transition hover:text-white md:text-3xl">
+                  {CONFIG.contacts.email}
+                </a>
+                <a href={`tel:${CONFIG.contacts.phone}`} style={FONT_DISPLAY} className="mt-2 block text-2xl font-black tracking-tighter text-black transition hover:text-white md:text-3xl">
+                  {CONFIG.contacts.phoneDisplay}
                 </a>
               </div>
             </div>
@@ -1064,10 +1147,8 @@ function BriefSection({ formRef }) {
             УЦЫ.ПРОДАКШН © 2026
           </div>
           <div style={FONT_MONO} className="flex gap-6 text-xs uppercase tracking-widest text-black/60">
-            <a href="#" className="transition hover:text-black">Telegram</a>
-            <a href="#" className="transition hover:text-black">Instagram</a>
-            <a href="#" className="transition hover:text-black">YouTube</a>
-            <a href="#" className="transition hover:text-black">Privacy</a>
+            <a href={CONFIG.socials.telegram} target="_blank" rel="noreferrer" className="transition hover:text-black">Telegram</a>
+            <a href={CONFIG.socials.instagram} target="_blank" rel="noreferrer" className="transition hover:text-black">Instagram</a>
           </div>
         </div>
       </div>
