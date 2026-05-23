@@ -652,35 +652,9 @@ function FlipCard({ service }) {
               onClick={() => setFlipped(true)}
               className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border-2 border-white/10 ${service.color} p-7 md:p-10 cursor-pointer`}
             >
-              {/* Discount corner badge */}
-              {service.oldPrice && (
-                <motion.div
-                  initial={{ scale: 0, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 12 }}
-                  transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="pointer-events-none absolute -right-4 -top-4 z-10 flex h-24 w-24 items-center justify-center md:-right-2 md:-top-2 md:h-28 md:w-28"
-                >
-                  {/* Pulsing ring */}
-                  <motion.div
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute inset-2 rounded-full bg-black"
-                  />
-                  {/* Core badge */}
-                  <div className="relative flex h-20 w-20 flex-col items-center justify-center rounded-full bg-black text-center md:h-24 md:w-24">
-                    <span style={FONT_DISPLAY} className="text-2xl font-black leading-none tracking-tighter text-lime-300 md:text-3xl">
-                      −33%
-                    </span>
-                    <span style={FONT_MONO} className="mt-1 text-[8px] uppercase tracking-widest text-white/70 md:text-[9px]">
-                      Скидка
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-
               <div className="mb-8 flex items-start justify-between">
                 <span style={FONT_MONO} className="text-sm font-bold text-black/60">{service.num} / 03</span>
-                <span style={FONT_MONO} className={`text-[10px] uppercase tracking-widest text-black/50 ${service.oldPrice ? "opacity-0" : ""}`}>
+                <span style={FONT_MONO} className="text-[10px] uppercase tracking-widest text-black/50">
                   ↻ Нажми
                 </span>
               </div>
