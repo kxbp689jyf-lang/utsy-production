@@ -473,19 +473,21 @@ const SERVICES = [
 // =============================================================================
 function AnimatedBullet({ delay = 0 }) {
   return (
-    <motion.span
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mt-[7px] flex h-3 w-3 shrink-0 items-center justify-center"
-    >
+    <span className="relative mt-[7px] flex h-3 w-3 shrink-0 items-center justify-center">
       <motion.span
-        animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 rounded-full bg-lime-300"
-      />
-      <span className="relative h-2 w-2 rounded-full bg-lime-300" />
-    </motion.span>
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <motion.span
+          animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute h-2.5 w-2.5 rounded-full bg-lime-300"
+        />
+        <span className="relative h-2 w-2 rounded-full bg-lime-300" />
+      </motion.span>
+    </span>
   );
 }
 
@@ -543,7 +545,7 @@ function ScrollableText({ content }) {
             const delay = liIndex * 0.15;
             liIndex += 1;
             return (
-              <div key={i} className="flex items-start gap-3">
+              <div key={i} className="flex items-start gap-3 pl-1">
                 <AnimatedBullet delay={delay} />
                 <p className="text-sm leading-relaxed text-white/85 md:text-[15px]">{b.text}</p>
               </div>
@@ -650,9 +652,35 @@ function FlipCard({ service }) {
               onClick={() => setFlipped(true)}
               className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border-2 border-white/10 ${service.color} p-7 md:p-10 cursor-pointer`}
             >
+              {/* Discount corner badge */}
+              {service.oldPrice && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 12 }}
+                  transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="pointer-events-none absolute -right-4 -top-4 z-10 flex h-24 w-24 items-center justify-center md:-right-2 md:-top-2 md:h-28 md:w-28"
+                >
+                  {/* Pulsing ring */}
+                  <motion.div
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-2 rounded-full bg-black"
+                  />
+                  {/* Core badge */}
+                  <div className="relative flex h-20 w-20 flex-col items-center justify-center rounded-full bg-black text-center md:h-24 md:w-24">
+                    <span style={FONT_DISPLAY} className="text-2xl font-black leading-none tracking-tighter text-lime-300 md:text-3xl">
+                      −33%
+                    </span>
+                    <span style={FONT_MONO} className="mt-1 text-[8px] uppercase tracking-widest text-white/70 md:text-[9px]">
+                      Скидка
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+
               <div className="mb-8 flex items-start justify-between">
                 <span style={FONT_MONO} className="text-sm font-bold text-black/60">{service.num} / 03</span>
-                <span style={FONT_MONO} className="text-[10px] uppercase tracking-widest text-black/50">
+                <span style={FONT_MONO} className={`text-[10px] uppercase tracking-widest text-black/50 ${service.oldPrice ? "opacity-0" : ""}`}>
                   ↻ Нажми
                 </span>
               </div>
@@ -665,25 +693,16 @@ function FlipCard({ service }) {
 
               <div className="mt-6 flex items-end justify-between border-t-2 border-black/20 pt-5">
                 <div>
-                  <div className="flex items-baseline gap-3">
-                    <div style={FONT_DISPLAY} className="text-3xl font-black tracking-tighter text-black md:text-4xl">
-                      {service.stat}
+                  {service.oldPrice && (
+                    <div style={FONT_DISPLAY} className="mb-1 text-base font-black tracking-tighter text-black/40 line-through md:text-lg">
+                      {service.oldPrice}
                     </div>
-                    {service.oldPrice && (
-                      <div style={FONT_DISPLAY} className="text-lg font-black tracking-tighter text-black/40 line-through md:text-xl">
-                        {service.oldPrice}
-                      </div>
-                    )}
+                  )}
+                  <div style={FONT_DISPLAY} className="text-3xl font-black tracking-tighter text-black md:text-4xl">
+                    {service.stat}
                   </div>
-                  <div className="mt-1 flex items-center gap-2">
-                    <div style={FONT_MONO} className="text-xs uppercase tracking-widest text-black/60">
-                      {service.statLabel}
-                    </div>
-                    {service.oldPrice && (
-                      <span style={FONT_MONO} className="rounded-full bg-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-lime-300">
-                        −33%
-                      </span>
-                    )}
+                  <div style={FONT_MONO} className="mt-1 text-xs uppercase tracking-widest text-black/60">
+                    {service.statLabel}
                   </div>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-white transition-transform group-hover:rotate-180 md:h-14 md:w-14">
