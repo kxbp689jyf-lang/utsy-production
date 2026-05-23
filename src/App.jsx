@@ -86,7 +86,7 @@ function Rotating3DText() {
   return (
     <div
       style={{ perspective: 1400 }}
-      className="pointer-events-none absolute inset-x-0 bottom-[44%] z-[5] flex items-end justify-center px-6 md:bottom-32 md:px-12"
+      className="pointer-events-none absolute inset-x-0 bottom-[36%] z-[5] flex items-start justify-center px-6 md:bottom-auto md:top-[58%] md:px-12"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -95,7 +95,7 @@ function Rotating3DText() {
           animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
           exit={{ opacity: 0, rotateX: 90, y: -80, scale: 0.85 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          style={{ transformStyle: "preserve-3d", transformOrigin: "bottom center" }}
+          style={{ transformStyle: "preserve-3d", transformOrigin: "top center" }}
           className="relative w-full max-w-[1100px] text-center"
         >
           {/* Counter label */}
@@ -121,7 +121,7 @@ function Rotating3DText() {
             }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             style={{ ...FONT_DISPLAY, transformStyle: "preserve-3d" }}
-            className="text-4xl font-black leading-[0.95] tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl"
+            className="text-3xl font-black leading-[0.95] tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl"
           >
             {PHRASES[idx].split(" ").map((word, i) => (
               <motion.span
@@ -303,7 +303,6 @@ function Hero({ onCTA }) {
         </div>
         <nav style={FONT_MONO} className="hidden gap-8 text-sm font-medium uppercase tracking-widest text-white/80 md:flex">
           <a href="#services" className="transition hover:text-lime-300">Услуги</a>
-          <a href="#works" className="transition hover:text-lime-300">Работы</a>
           <a href="#brief" className="transition hover:text-lime-300">Бриф</a>
         </nav>
         <button
